@@ -6,7 +6,7 @@ const state = {
   rangeStart: null,
   rangeEnd: null,
   selectingRange: false,
-  showZeroMetrics: false,
+  showZeroMetrics: true,
   calendarMonth: null,
   editorKey: sessionStorage.getItem("ecp-editor-key") || ""
 };
@@ -41,7 +41,7 @@ const overviewLabels = {
   "Психотерапевтическая помощь": [],
   "Стойка регистрации": ["Всего посетителей", "Участники", "Родственники", "Дети"],
   "Контакт-центр": ["Количество обработанных входящих звонков", "Исходящие звонки", "Из них переведённых с 117"],
-  "Похоронный отдел": ["Всего сотрудников в смене", "Взаимодействие в ЕЦП с семьёй", "Взаимодействие по телефону с семьёй", "Взаимодействие с ГБУ Ритуал"],
+  "УПМ": ["Всего сотрудников в смене", "Взаимодействие в ЕЦП с семьёй", "Взаимодействие по телефону с семьёй", "Взаимодействие с ГБУ Ритуал"],
   "ЭДО": ["Сотрудников в смену", "Подготовка ответов на входящие обращения", "Регистрация ЭДО: получено", "Регистрация ЭДО: закрыто"],
   "Первичный прием": ["Всего", "Первично: всего", "Вторично: всего", "Верификация"],
   "МФЦ": ["Принято заявителей", "Принято запросов и услуг", "Отработано заявителей", "Дозвон"],
@@ -170,7 +170,7 @@ function keyMetrics(department) {
   if (department.name === "Психотерапевтическая помощь") return psychotherapyPrimaryMetrics;
   if (department.name === "Стойка регистрации") return registrationPrimaryMetrics;
   if (department.name === "Контакт-центр") return contactCenterPrimaryMetrics;
-  if (department.name === "Похоронный отдел") return funeralPrimaryMetrics;
+  if (department.name === "УПМ") return funeralPrimaryMetrics;
   if (department.name === "ЭДО") return edoPrimaryMetrics;
   return found.length ? found : department.metrics.slice(0, 4);
 }
@@ -253,7 +253,7 @@ function makeNav() {
 
 function selectView(view) {
   state.view = view;
-  state.showZeroMetrics = false;
+  state.showZeroMetrics = true;
   if (state.mode === "day" && (!state.date || dateStatus(state.date) === "empty")) state.date = latestAvailableDate();
   state.calendarMonth = toDate(state.mode === "day" ? state.date : state.rangeEnd);
   makeNav(); renderDateControl(); render(); closeSidebar();
@@ -261,7 +261,7 @@ function selectView(view) {
 }
 function selectDate(date) {
   if (state.mode === "day") {
-    state.date = date; state.showZeroMetrics = false; state.calendarMonth = toDate(date); renderDateControl(); render(); closeDatePopover(); return;
+    state.date = date; state.showZeroMetrics = true; state.calendarMonth = toDate(date); renderDateControl(); render(); closeDatePopover(); return;
   }
   if (!state.selectingRange) {
     state.rangeStart = date; state.rangeEnd = date; state.selectingRange = true;
@@ -277,7 +277,7 @@ function selectDate(date) {
 
 function setMode(mode) {
   if (state.mode === mode) return;
-  state.mode = mode; state.selectingRange = false; state.showZeroMetrics = false;
+  state.mode = mode; state.selectingRange = false; state.showZeroMetrics = true;
   if (mode === "range") {
     const dates = allDates(); const endIndex = Math.max(0, dates.indexOf(state.date));
     state.rangeEnd = dates[endIndex] || dates.at(-1); state.rangeStart = dates[Math.max(0, endIndex - 6)] || state.rangeEnd;
@@ -323,7 +323,7 @@ function setQuickRange(range) {
     state.rangeStart = dates[Math.max(0, endIndex - length + 1)];
   }
   state.selectingRange = false;
-  state.showZeroMetrics = false;
+  state.showZeroMetrics = true;
   state.calendarMonth = toDate(state.rangeEnd);
   renderDateControl(); render(); closeDatePopover();
   els.dateTrigger.focus({ preventScroll: true });
@@ -650,7 +650,7 @@ function buildDetailGroups(department) {
   if (department.name === "ОППС, социальные психологи") customGroups = oppsGroups(department);
   if (department.name === "Психотерапевтическая помощь") customGroups = psychotherapyGroups(department);
   if (department.name === "Стойка регистрации") customGroups = registrationGroups(department);
-  if (department.name === "Похоронный отдел") customGroups = funeralGroups(department);
+  if (department.name === "УПМ") customGroups = funeralGroups(department);
   if (department.name === "ЭДО") customGroups = edoGroups(department);
   if (customGroups) {
     const groupedIds = new Set(customGroups.flatMap((group) => group.metrics.map((metric) => metric.id)));
@@ -780,7 +780,7 @@ function renderDetailGroups(department, record, alwaysVisibleIds = new Set()) {
 function renderDepartment() {
   const department = state.store.departments[state.view]; const record = aggregateRecord(department);
   if (department.name === "Контакт-центр") record.__contact_center_total = metricValue(department, record, contactCenterPrimaryMetrics[0]);
-  if (department.name === "Похоронный отдел") record.__funeral_family_total = metricValue(department, record, funeralPrimaryMetrics[1]);
+  if (department.name === "УПМ") record.__funeral_family_total = metricValue(department, record, funeralPrimaryMetrics[1]);
   const keys = keyMetrics(department).map((metric) => (
     department.name !== "Персональные координаторы" ? metric
       : metric.id === "m08" ? { ...metric, label: "Обзвон спецкатегорий" }
@@ -814,7 +814,7 @@ function renderDepartment() {
     const rci = registrationMetricById.get("__registration_rci");
     metricExtras.set("__registration_rci", rci.parts.map((part) => ({ metric: { id: part.id, label: part.label }, value: record[part.id] })));
   }
-  if (department.name === "Похоронный отдел") {
+  if (department.name === "УПМ") {
     const familyTotal = funeralMetricById.get("__funeral_family_total");
     metricExtras.set("__funeral_family_total", familyTotal.parts.map((part) => ({ metric: { id: part.id, label: part.label }, value: record[part.id] })));
   }
