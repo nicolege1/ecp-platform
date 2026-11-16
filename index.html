@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЕЦП | Сервисы</title>
+  <style>
+    @font-face {
+      font-family: "Golos Text";
+      src: url("assets/GolosText-VariableFont_wght.ttf") format("truetype");
+      font-weight: 100 900;
+    }
+
+    :root {
+      --green: #6e7835;
+      --green-dark: #455120;
+      --green-light: #edf0e4;
+      --ink: #111212;
+      --muted: #6b7a34;
+      --line: #e2e4df;
+      --page: #f4f5f3;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--page);
+      font-family: "Golos Text", Arial, sans-serif;
+    }
+
+    .topbar {
+      height: 52px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: var(--white);
+      background: var(--green);
+      box-shadow: 0 5px 20px rgba(31, 54, 22, 0.18);
+    }
+
+    .brand {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .brand { display: flex; align-items: center; }
+    .brand img { height: 32px; width: auto; display: block; }
+
+    .account { display: flex; align-items: center; gap: 22px; }
+    .user { text-align: left; line-height: 1.2; }
+    .user strong { display: block; font-size: 15px; font-weight: 600; }
+    .user span { font-size: 13px; opacity: 0.8; }
+
+    .icons { display: flex; align-items: center; gap: 6px; }
+    .icons button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .icons button:hover { background: rgba(255, 255, 255, 0.14); }
+    .icons button:focus-visible { outline: 2px solid var(--white); outline-offset: 1px; }
+    .icons svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    main {
+      max-width: 1470px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 222px);
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .card {
+      height: 202px;
+      padding: 16px 14px;
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      border-color: var(--green);
+      box-shadow: 0 10px 28px rgba(31, 42, 27, 0.1);
+    }
+    .card:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+    .card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    @media (max-width: 560px) {
+      .user span { display: none; }
+      .services { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .card { height: 170px; }
+    }
+
+    /* Стиль как в адаптации */
+    :root { --green: #6E7835; --ink: #212529; --muted: #6C7277; --line: #E3E4E6; --page: #F5F5F5; }
+    body { line-height: 1.45; -webkit-font-smoothing: antialiased; }
+    .topbar { box-shadow: none; }
+    main { max-width: 1180px; padding: 36px 32px 80px; }
+    .services { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card { height: 170px; padding: 20px; border-radius: 8px; transition: border-color .15s; }
+    .card:hover { border-color: var(--green); box-shadow: none; }
+    .card h2 { margin-bottom: 10px; }
+    .card p { color: #5A632B; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><img src="assets/logo-white.svg" alt="Единый центр поддержки"></a>
+    <div class="account">
+      <div class="user pbar-user">
+        <strong>Тест</strong>
+        <span>Аналитик</span>
+      </div>
+      <div class="icons pbar-icons">
+        <button type="button" aria-label="Уведомления"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9ZM10 20a2.2 2.2 0 0 0 4 0"/></svg></button>
+        <button type="button" aria-label="Настройки"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7.2 19.7l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1A1.7 1.7 0 0 0 3.1 14H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.8l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1A1.7 1.7 0 0 0 10 3.1V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.8 1.2l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1A1.7 1.7 0 0 0 20.9 10H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
+        <button type="button" aria-label="Выйти"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h9" transform="matrix(-1 0 0 1 24 0)"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <ul class="services">
+      <li>
+        <a class="card" href="queue/">
+          <h2>Электронная очередь</h2>
+          <p>Отчёт по юридической консультации за выбранные даты</p>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="reports/">
+          <h2>Ежедневные отчёты</h2>
+          <p>Ежедневные операционные показатели подразделений ЕЦП</p>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="adaptation/">
+          <h2>Адаптация сотрудников</h2>
+          <p>Курс для новых сотрудников ЕЦП</p>
+        </a>
+      </li>
+    </ul>
+  </main>
+  <script src="assets/profile.js"></script>
+</body>
+</html>

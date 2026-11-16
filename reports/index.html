@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Операционные показатели ЕЦП</title>
+  <link rel="stylesheet" href="styles.css?v=ux-color3" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-title">
+        <button class="menu-button" id="menuButton" type="button" aria-label="Открыть список подразделений">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="pbar-left">
+          <a class="pbar-logo" href="../" title="Все сервисы"><img src="assets/logo-white.svg" alt="Единый центр поддержки. Все сервисы" /></a>
+          <h1 id="pageTitle" class="pbar-service">Ежедневные отчёты</h1>
+        </div>
+      </div>
+      <div class="pbar-account">
+      <div class="pbar-user"><strong>Тест</strong><span>Аналитик</span></div>
+      <div class="pbar-icons">
+        <button type="button" aria-label="Уведомления"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9ZM10 20a2.2 2.2 0 0 0 4 0"/></svg></button>
+        <button type="button" aria-label="Настройки"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7.2 19.7l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1A1.7 1.7 0 0 0 3.1 14H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.8l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1A1.7 1.7 0 0 0 10 3.1V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.8 1.2l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1A1.7 1.7 0 0 0 20.9 10H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
+        <button type="button" aria-label="Выйти"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h9" transform="matrix(-1 0 0 1 24 0)"/></svg></button>
+      </div>
+    </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Подразделения">
+        <div class="sidebar-head">
+          <span>Подразделения</span>
+          <button id="closeSidebar" class="icon-button" type="button" aria-label="Закрыть список">×</button>
+        </div>
+        <nav id="departmentNav"></nav>
+        <button id="editorLoginButton" class="sidebar-editor" type="button" hidden>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12a2 2 0 0 1 2 2v7H4v-7a2 2 0 0 1 2-2Z"/></svg>
+          <span>Режим редактора</span>
+        </button>
+      </aside>
+
+      <main class="workspace">
+        <section class="toolbar" aria-label="Фильтры отчёта">
+          <div class="period-toggle" role="group" aria-label="Режим отчёта">
+            <button id="dayMode" class="active" type="button">За день</button>
+            <button id="rangeMode" type="button">За период</button>
+          </div>
+          <div class="date-navigator">
+            <button class="date-arrow" id="previousDate" type="button" aria-label="Предыдущая дата"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="date-picker-wrap">
+              <button class="date-trigger" id="dateTrigger" type="button" aria-haspopup="dialog" aria-expanded="false">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5.5 4h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+                <span id="dateTriggerText">Дата</span>
+              </button>
+              <div class="date-popover" id="datePopover" role="dialog" aria-label="Выбор даты" hidden>
+                <div class="month-head">
+                  <button id="previousMonth" type="button" aria-label="Предыдущий месяц">‹</button>
+                  <strong id="monthTitle"></strong>
+                  <button id="nextMonth" type="button" aria-label="Следующий месяц">›</button>
+                </div>
+                <div class="weekdays" aria-hidden="true">
+                  <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="quick-ranges" id="quickRanges" hidden>
+                  <button type="button" data-range="7">7 дней</button>
+                  <button type="button" data-range="14">14 дней</button>
+                  <button type="button" data-range="month">Весь месяц</button>
+                </div>
+                <p class="range-hint" id="rangeHint" hidden></p>
+                <div class="calendar-legend">
+                  <span><i class="dot complete"></i>Заполнено</span>
+                  <span><i class="dot partial"></i>Частично</span>
+                  <span><i class="dot empty"></i>Нет данных</span>
+                </div>
+              </div>
+            </div>
+            <button class="date-arrow" id="nextDate" type="button" aria-label="Следующая дата"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <button id="exportButton" class="button-secondary export-button" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+            Выгрузить
+          </button>
+          <button id="editButton" class="edit-button" type="button" hidden>Изменить показатели</button>
+        </section>
+
+        <section class="section-block overview-section" id="overviewSection" hidden aria-labelledby="overviewTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Единый центр поддержки</p>
+              <h2 id="overviewTitle">Обзор подразделений</h2>
+            </div>
+            <p id="overviewDateLabel" class="selected-date"></p>
+          </div>
+          <div class="overview-grid" id="overviewGrid"></div>
+        </section>
+
+        <section class="section-block" id="primarySection" aria-labelledby="mainMetricsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker" id="primaryKicker">Показатели за день</p>
+              <h2 id="mainMetricsTitle">Основные показатели</h2>
+            </div>
+            <p id="selectedDateLabel" class="selected-date"></p>
+          </div>
+          <div class="metric-grid metric-grid-main" id="primaryMetrics"></div>
+        </section>
+
+        <section class="section-block period-analytics" id="periodAnalyticsSection" hidden aria-labelledby="periodAnalyticsTitle">
+          <div class="section-heading compact">
+            <div>
+              <p class="section-kicker">Аналитика за период</p>
+              <h2 id="periodAnalyticsTitle">Динамика по дням</h2>
+            </div>
+          </div>
+          <div class="analytics-grid" id="periodCharts"></div>
+        </section>
+
+        <section class="section-block section-secondary" id="secondarySection" aria-labelledby="secondaryMetricsTitle">
+          <div class="section-heading compact">
+            <h2 id="secondaryMetricsTitle">Детализация</h2>
+            <div class="detail-heading-actions">
+              <button class="text-button detail-toggle" id="toggleZeroMetrics" type="button" hidden></button>
+            </div>
+          </div>
+          <div class="detail-sections" id="secondaryMetrics"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+
+    <dialog id="editDialog" class="edit-dialog">
+      <form id="editForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="section-kicker">Редактирование</p>
+            <h2 id="editTitle">Показатели</h2>
+          </div>
+          <button class="icon-button" id="closeDialog" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <div class="edit-grid" id="editFields"></div>
+        <p class="form-message" id="formMessage" role="status"></p>
+        <div class="dialog-actions">
+          <button class="button-secondary" id="cancelEdit" type="button">Отмена</button>
+          <button class="button-primary" id="saveButton" type="submit">Сохранить изменения</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="exportDialog" class="edit-dialog export-dialog">
+      <form id="exportForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="section-kicker">Выгрузка отчётов</p>
+            <h2>Параметры выгрузки</h2>
+          </div>
+          <button class="icon-button" id="closeExportDialog" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <div class="export-date-row">
+          <span>Дата отчёта</span>
+          <strong id="exportDateLabel">-</strong>
+        </div>
+        <div class="export-select-head">
+          <strong>Подразделения</strong>
+          <button id="toggleAllDepartments" class="text-button" type="button">Выбрать все</button>
+        </div>
+        <div class="export-departments" id="exportDepartments"></div>
+        <fieldset class="format-choice">
+          <legend>Формат</legend>
+          <label><input type="radio" name="format" value="pptx" checked /><span>PowerPoint</span></label>
+          <label><input type="radio" name="format" value="pdf" /><span>PDF для печати</span></label>
+        </fieldset>
+        <p class="form-message" id="exportMessage" role="status"></p>
+        <div class="dialog-actions">
+          <button class="button-secondary" id="cancelExport" type="button">Отмена</button>
+          <button class="button-primary" id="downloadExport" type="submit">Скачать отчёты</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="editorLoginDialog" class="edit-dialog editor-login-dialog">
+      <form id="editorLoginForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="section-kicker">Доступ</p>
+            <h2>Режим редактора</h2>
+          </div>
+          <button class="icon-button" id="closeEditorLogin" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <label class="field editor-code-field">
+          <span>Личный код редактора</span>
+          <input id="editorCode" type="password" autocomplete="current-password" required />
+        </label>
+        <p class="form-message" id="editorLoginMessage" role="status"></p>
+        <div class="dialog-actions">
+          <button class="button-secondary" id="cancelEditorLogin" type="button">Отмена</button>
+          <button class="button-primary" id="confirmEditorLogin" type="submit">Войти</button>
+        </div>
+      </form>
+    </dialog>
+
+  <script type="module" src="app.js?v=ux-text1"></script>
+    <script src="../assets/profile.js"></script>
+</body>
+</html>

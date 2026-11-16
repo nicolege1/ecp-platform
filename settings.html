@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЕЦП | Настройки</title>
+  <style>
+    @font-face {
+      font-family: "Golos Text";
+      src: url("assets/GolosText-VariableFont_wght.ttf") format("truetype");
+      font-weight: 100 900;
+    }
+    :root {
+      --green: #6E7835; --green-dark: #5A632B; --green-tint: #EEF1E3;
+      --ink: #212529; --muted: #6C7277; --line: #E3E4E6; --band: #F5F5F5;
+      --red: #C82E3E; --ok: #3E8E5A;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; color: var(--ink); background: #fff; font: 15px/1.45 "Golos Text", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    button, input, select { font: inherit; }
+
+    .topbar { height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 24px; color: #fff; background: var(--green); }
+    .pbar-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .pbar-logo img { height: 32px; width: auto; display: block; }
+    .pbar-service { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.35); font-size: 16px; font-weight: 600; white-space: nowrap; }
+    .pbar-account { display: flex; align-items: center; gap: 22px; }
+    .pbar-user { line-height: 1.2; }
+    .pbar-user strong { display: block; font-size: 15px; font-weight: 600; }
+    .pbar-user span { font-size: 13px; opacity: .8; }
+    .pbar-icons { display: flex; align-items: center; gap: 6px; }
+    .pbar-icons button, .pbar-icons a { width: 34px; height: 34px; padding: 0; display: grid; place-items: center; color: #fff; background: transparent; border: 0; border-radius: 6px; cursor: pointer; }
+    .pbar-icons button:hover, .pbar-icons a:hover { background: rgba(255,255,255,.14); }
+    .pbar-icons svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    .band { background: var(--band); border-bottom: 1px solid var(--line); }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+    .band .wrap { padding-top: 28px; padding-bottom: 28px; }
+    .crumbs { margin-bottom: 10px; color: var(--muted); font-size: 14px; }
+    .crumbs a { color: inherit; }
+    h1 { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; }
+
+    main { max-width: 784px; padding: 44px 32px 80px; }
+    .pcard { margin-bottom: 24px; padding: 26px 28px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    h2 { margin: 0 0 6px; font-size: 20px; line-height: 1.2; font-weight: 600; }
+    .hint { margin: 0 0 22px; color: var(--muted); font-size: 13px; }
+    label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 13px; }
+    input, select { width: 100%; height: 44px; margin-bottom: 18px; padding: 0 14px; color: var(--ink); background: #fff; border: 1.5px solid var(--line); border-radius: 6px; outline: none; }
+    input:focus, select:focus { border-color: var(--green); }
+    .actions { display: flex; align-items: center; gap: 16px; margin-top: 4px; }
+    .btn { padding: 12px 28px; color: #fff; background: var(--green); border: 0; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn:hover { background: var(--green-dark); }
+    .btn:disabled { background: #C9CCC0; cursor: default; }
+    .status { font-size: 14px; }
+    .status.ok { color: var(--ok); }
+    .status.error { color: var(--red); }
+
+    @media (max-width: 820px) {
+      .topbar { padding: 0 14px; }
+      .pbar-user, .pbar-service { display: none; }
+      .wrap, main { padding-left: 16px; padding-right: 16px; }
+      .pcard { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="pbar-left">
+      <a class="pbar-logo" href="./" title="Все сервисы"><img src="assets/logo-white.svg" alt="Единый центр поддержки. Все сервисы"></a>
+      <span class="pbar-service">Настройки</span>
+    </div>
+    <div class="pbar-account">
+      <div class="pbar-user"><strong></strong><span></span></div>
+      <div class="pbar-icons">
+        <button type="button" aria-label="Уведомления"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9ZM10 20a2.2 2.2 0 0 0 4 0"/></svg></button>
+        <a href="settings.html" aria-label="Настройки" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7.2 19.7l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1A1.7 1.7 0 0 0 3.1 14H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.8l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1A1.7 1.7 0 0 0 10 3.1V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.8 1.2l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1A1.7 1.7 0 0 0 20.9 10H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></a>
+        <button type="button" aria-label="Выйти"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h9" transform="matrix(-1 0 0 1 24 0)"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="band">
+    <div class="wrap">
+      <div class="crumbs"><a href="./">Сервисы</a> › Настройки</div>
+      <h1>Настройки</h1>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <form class="pcard" id="profileForm">
+      <h2>Данные сотрудника</h2>
+      <p class="hint">Используются во всех сервисах платформы</p>
+      <label for="fio">ФИО</label>
+      <input id="fio" name="фио" required autocomplete="name">
+      <label for="position">Должность</label>
+      <input id="position" name="должность" autocomplete="organization-title">
+      <label for="department">Отдел</label>
+      <select id="department" name="отдел"></select>
+      <div class="actions">
+        <button class="btn" type="submit">Сохранить</button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+    </form>
+  </main>
+
+  <script src="assets/profile.js"></script>
+  <script>
+    // Список отделов ЕЦП с 01.11.26, как в сервисе адаптации
+    const DEPARTMENTS = [
+      "Аппарат управления",
+      "Отдел кадров",
+      "Отдел юридического консультирования и сопровождения",
+      "Отдел комплексной безопасности",
+      "Планово-экономический отдел",
+      "Отдел организации и контроля работы с документами",
+      "Отдел материально-технического снабжения",
+      "Отдел организации персональной работы",
+      "Сектор персональных социальных координаторов",
+      "Сектор дистанционной поддержки",
+      "Сектор по работе зоны первичного контакта",
+      "Отдел психолого-психотерапевтического сопровождения",
+      "Отдел реабилитационного сопровождения, адаптации и социализации",
+      "Отдел организации специальных проектов",
+      "Аналитический отдел",
+      "Отдел по работе с обращениями граждан",
+      "Управление мероприятий и коммуникаций",
+      "Отдел организации проведения мероприятий",
+      "Отдел правовой работы"
+    ];
+    const form = document.getElementById("profileForm");
+    const status = document.getElementById("status");
+    const select = document.getElementById("department");
+
+    function setStatus(text, kind) { status.textContent = text; status.className = "status " + (kind || ""); }
+
+    function fillDepartments(current) {
+      const list = current && !DEPARTMENTS.includes(current) ? DEPARTMENTS.concat(current) : DEPARTMENTS;
+      select.innerHTML = '<option value="">Не выбран</option>' +
+        list.map(d => `<option${d === current ? " selected" : ""}></option>`).join("");
+      [...select.options].slice(1).forEach((o, i) => { o.textContent = list[i]; o.value = list[i]; });
+    }
+
+    function showHeader(p) {
+      document.querySelector(".pbar-user strong").textContent = p.фио;
+      document.querySelector(".pbar-user span").textContent = p.должность || p.отдел || "";
+    }
+
+    Promise.resolve(ECPProfile.get())
+      .then(p => {
+        form.фио.value = p.фио;
+        form.должность.value = p.должность;
+        fillDepartments(p.отдел);
+        showHeader(p);
+      })
+      .catch(() => { fillDepartments(""); setStatus("Ошибка загрузки данных", "error"); });
+
+    form.addEventListener("input", () => setStatus(""));
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const button = form.querySelector(".btn");
+      button.disabled = true;
+      setStatus("Сохранение...");
+      Promise.resolve(ECPProfile.set({ фио: form.фио.value, должность: form.должность.value, отдел: select.value }))
+        .then(({ ok, data }) => {
+          if (!ok) throw new Error(data.ошибка);
+          showHeader(data);
+          setStatus("Изменения сохранены", "ok");
+        })
+        .catch(err => setStatus(err.message || "Ошибка сохранения", "error"))
+        .finally(() => { button.disabled = false; });
+    });
+  </script>
+</body>
+</html>
