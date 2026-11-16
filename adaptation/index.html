@@ -1062,10 +1062,10 @@ Promise.resolve(ECPProfile.get())
       platformProfile = p;
       const nu = Object.assign({}, user || {}, {фио: p.фио, должность: p.должность});
       if(p.отдел) nu.отдел = p.отдел;
-      if(nu.отдел){
-        if(user) saveUser(nu, true);
-        else { user = nu; save(KEY_USER, user); prog = load(keyProg(user), {}); }
-      }
+      if(!nu.отдел) nu.отдел = '';
+      // вход в адаптацию по профилю платформы, без отдельного окна входа
+      if(user) saveUser(nu, true);
+      else { user = nu; save(KEY_USER, user); prog = load(keyProg(user), {}); }
     }
     route();
   });
