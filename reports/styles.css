@@ -746,5 +746,48 @@ button:focus-visible, [tabindex="0"]:focus-visible { outline: 2px solid var(--gr
 /* Без полоски слева у выбранного пункта меню */
 .nav-item.active, .nav-overview.active { box-shadow: none; }
 
+/* Новый вид страницы (пока только Персональные координаторы) */
+.pk-modern .metric-card { display: flex; flex-direction: column; }
+.pk-modern .metric-foot { order: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 12px; position: relative; z-index: 1; }
+.pk-modern .metric-card.has-breakdown .metric-foot { margin-bottom: 12px; }
+.pk-modern .trend { padding: 2px 7px; border-radius: 4px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pk-modern .trend.up { color: var(--green-900); background: var(--green-100); }
+.pk-modern .trend.down { color: #a4471f; background: #f8e9e1; }
+.pk-modern .trend.flat { color: var(--muted); background: #eef0ec; }
+.pk-modern .trend-label { color: var(--muted); font-size: 14px; }
+.pk-modern .spark-box { position: relative; flex: 1 0 100%; height: 34px; margin-top: 6px; }
+.pk-modern .spark-box svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.pk-modern .spark-box polygon { fill: var(--green-700); opacity: .1; }
+.pk-modern .spark-box polyline { fill: none; stroke: var(--green-700); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+.pk-modern .spark-box i { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--green-700); box-shadow: 0 0 0 3px var(--white); }
+.pk-modern .workforce-card .trend { color: var(--white); background: rgba(255,255,255,.16); }
+.pk-modern .workforce-card .trend-label { color: rgba(255,255,255,.75); }
+.pk-modern .workforce-card .spark-box polygon { fill: var(--white); opacity: .14; }
+.pk-modern .workforce-card .spark-box polyline { stroke: var(--white); }
+.pk-modern .workforce-card .spark-box i { background: var(--white); box-shadow: 0 0 0 3px var(--green-700); }
+
+.pk-modern .detail-group { background: var(--white); }
+.pk-modern .detail-list { gap: 0; border: 0; border-radius: 0; background: transparent; }
+.pk-modern .detail-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 7px; min-height: 0; padding: 11px 0; border-bottom: 1px solid var(--line); background: transparent; }
+.pk-modern .detail-row:last-child { border-bottom: 0; }
+.pk-modern .detail-row strong { font-size: 18px; color: var(--green-900); }
+.pk-modern .detail-row.zero strong, .pk-modern .detail-row.missing strong { color: #a3a8a2; }
+.pk-modern .row-bar { grid-column: 1 / -1; display: block; height: 4px; border-radius: 4px; background: #eef0ec; overflow: hidden; }
+.pk-modern .row-bar b { display: block; height: 100%; border-radius: 4px; background: var(--green-700); }
+
+.share-layout { display: grid; gap: 14px; }
+.share-total { display: flex; align-items: baseline; gap: 8px; }
+.share-total strong { color: var(--green-900); font-family: "Moskvich Sans", Arial, sans-serif; font-size: 40px; line-height: 1; }
+.share-total span { color: var(--muted); font-size: 15px; }
+.share-bar { display: flex; gap: 3px; height: 14px; border-radius: 4px; overflow: hidden; background: #eef0ec; }
+.share-bar span { display: block; min-width: 3px; }
+.share-legend > div { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto 44px; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.share-legend > div:last-child { border-bottom: 0; }
+.share-legend i { width: 10px; height: 10px; border-radius: 2px; }
+.share-legend span { font-size: 16px; }
+.share-legend strong { color: var(--green-900); font-family: "Moskvich Sans", Arial, sans-serif; font-size: 18px; }
+.share-legend small { color: var(--muted); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+.pk-modern .detail-row.zero .row-bar, .pk-modern .detail-row.missing .row-bar { display: none; }
+
 /* Версия для GitHub Pages: без выгрузки и редактирования */
 .export-button, .sidebar-editor, #editButton { display: none !important; }

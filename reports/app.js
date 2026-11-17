@@ -464,10 +464,89 @@ function metricCard(metric, value, index, hasWorkforce, extras = []) {
   return card;
 }
 
+// Новый вид карточек (пока только Персональные координаторы): сравнение с прошлым днём или периодом и мини-график
+function hasValue(value) { return value !== null && value !== undefined && Number.isFinite(Number(value)); }
+function metricTrend(department, metric) {
+  const dates = allDates();
+  const workforce = isWorkforceMetric(metric);
+  const combine = (values) => {
+    const numbers = values.filter(hasValue).map(Number);
+    if (!numbers.length) return null;
+    // в периоде сравниваем среднее за день с данными: так пропущенные дни не искажают сравнение
+    return numbers.reduce((a, b) => a + b, 0) / numbers.length;
+  };
+  if (state.mode === "day") {
+    const before = dates.slice(0, dates.indexOf(state.date)).filter((date) => hasValue(metricSeries(department, metric, [date])[0]));
+    const previousDate = before.at(-1);
+    return {
+      current: metricSeries(department, metric, [state.date])[0],
+      previous: previousDate ? metricSeries(department, metric, [previousDate])[0] : null,
+      label: previousDate ? `к ${formatDate(previousDate, { day: "numeric", month: "short" }).replace(".", "")}` : "",
+      spark: metricSeries(department, metric, [...before.slice(-13), state.date])
+    };
+  }
+  const selected = selectedDates();
+  const start = toDate(state.rangeStart); const end = toDate(state.rangeEnd);
+  const length = Math.round((end - start) / 86400000) + 1;
+  const previousStart = new Date(start); previousStart.setDate(previousStart.getDate() - length);
+  const previousDates = dates.filter((date) => toDate(date) >= previousStart && toDate(date) < start);
+  return {
+    current: combine(metricSeries(department, metric, selected)),
+    previous: previousDates.length ? combine(metricSeries(department, metric, previousDates)) : null,
+    label: workforce ? "к прошлому периоду" : "в день к прошлому периоду",
+    spark: null
+  };
+}
+function sparklineHtml(values) {
+  const points = values.map((value, index) => [index, value]).filter(([, value]) => hasValue(value));
+  if (points.length < 2) return "";
+  const numbers = points.map(([, value]) => Number(value));
+  const max = Math.max(...numbers); const min = 0;
+  const last = Math.max(1, values.length - 1);
+  const xy = points.map(([index, value]) => [index / last * 100, 30 - (max === min ? .5 : (Number(value) - min) / (max - min)) * 26]);
+  const line = xy.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(" ");
+  const [lx, ly] = xy.at(-1);
+  return `<div class="spark-box" aria-hidden="true"><svg viewBox="0 0 100 32" preserveAspectRatio="none"><polygon points="${xy[0][0].toFixed(2)},32 ${line} ${lx.toFixed(2)},32"/><polyline points="${line}"/></svg><i style="left:${lx}%;top:${ly / 32 * 100}%"></i></div>`;
+}
+function metricFoot(department, metric) {
+  const info = metricTrend(department, metric);
+  const foot = document.createElement("div"); foot.className = "metric-foot";
+  if (hasValue(info.current) && hasValue(info.previous)) {
+    const workforce = isWorkforceMetric(metric);
+    const diff = workforce ? Math.round(Number(info.current)) - Math.round(Number(info.previous)) : Number(info.current) - Number(info.previous);
+    const arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "=";
+    const amount = workforce || Number(info.previous) === 0
+      ? displayValue(Math.abs(Math.round(diff)))
+      : `${Math.abs(Math.round(diff / Number(info.previous) * 100))}%`;
+    foot.insertAdjacentHTML("beforeend", `<span class="trend ${diff > 0 ? "up" : diff < 0 ? "down" : "flat"}">${arrow} ${amount}</span><span class="trend-label">${info.label}</span>`);
+  }
+  if (info.spark) foot.insertAdjacentHTML("beforeend", sparklineHtml(info.spark));
+  return foot;
+}
+function renderShareBar(group, record) {
+  const colors = ["var(--green-900)", "#a7b37a"];
+  const items = group.metrics.map((metric, index) => ({ metric, value: Number(record[metric.id] || 0), color: colors[index % colors.length] }));
+  const total = items.reduce((sum, item) => sum + item.value, 0);
+  const body = document.createElement("div"); body.className = "share-layout";
+  body.insertAdjacentHTML("beforeend", `<div class="share-total"><strong>${displayValue(total)}</strong><span>всего</span></div>`);
+  const bar = document.createElement("div"); bar.className = "share-bar";
+  bar.setAttribute("role", "img"); bar.setAttribute("aria-label", `${group.title}: ${displayValue(total)}`);
+  items.forEach((item) => { if (total && item.value) bar.insertAdjacentHTML("beforeend", `<span style="flex:${item.value};background:${item.color}"></span>`); });
+  body.append(bar);
+  const legend = document.createElement("div"); legend.className = "share-legend";
+  items.forEach((item) => {
+    const percent = total ? Math.round(item.value / total * 100) : 0;
+    legend.insertAdjacentHTML("beforeend", `<div><i style="background:${item.color}"></i><span>${item.metric.label}</span><strong>${displayValue(item.value)}</strong><small>${percent}%</small></div>`);
+  });
+  body.append(legend);
+  return body;
+}
+
 function renderOverview() {
   els.pageTitle.textContent = "Операционные показатели";
   els.overviewSection.hidden = false; els.primarySection.hidden = true; els.periodAnalyticsSection.hidden = true; els.secondarySection.hidden = true; els.editButton.hidden = true;
   els.overviewDateLabel.hidden = true; els.overviewGrid.innerHTML = "";
+  document.body.classList.remove("pk-modern");
   for (const id of state.store.departmentOrder) {
     const department = state.store.departments[id];
     const record = aggregateRecord(department);
@@ -752,11 +831,13 @@ function renderDetailGroups(department, record, alwaysVisibleIds = new Set()) {
           return { ...metric, label: label ? `${label.charAt(0).toUpperCase()}${label.slice(1)}` : metric.label };
         })
       } : group;
-      section.append(title, renderDonutGroup(donutGroup, record));
+      section.append(title, coordinatorDonut ? renderShareBar(donutGroup, record) : renderDonutGroup(donutGroup, record));
       els.secondaryMetrics.append(section);
       continue;
     }
     const list = document.createElement("div"); list.className = "detail-list";
+    const withBars = department.name === "Персональные координаторы";
+    const groupMax = Math.max(0, ...group.metrics.map((metric) => Number(record[metric.id]) || 0));
     for (const metric of group.metrics) {
       const value = record[metric.id]; const row = document.createElement("div");
       row.className = `detail-row${value === 0 ? " zero" : ""}${value === null || value === undefined ? " missing" : ""}`;
@@ -767,6 +848,7 @@ function renderDetailGroups(department, record, alwaysVisibleIds = new Set()) {
         ? "Всего"
         : rawLabel ? `${rawLabel.charAt(0).toUpperCase()}${rawLabel.slice(1)}` : metric.label;
       row.innerHTML = `<span>${shortLabel}</span><strong>${displayValue(value)}</strong>`;
+      if (withBars) row.insertAdjacentHTML("beforeend", `<em class="row-bar" aria-hidden="true"><b style="width:${groupMax ? (Number(value) || 0) / groupMax * 100 : 0}%"></b></em>`);
       list.append(row);
     }
     section.append(title, list); els.secondaryMetrics.append(section);
@@ -842,7 +924,13 @@ function renderDepartment() {
   els.primaryMetrics.classList.toggle("has-workforce", hasWorkforce);
   els.primaryMetrics.classList.toggle("psychotherapy-five", department.name === "Психотерапевтическая помощь");
   els.primaryMetrics.classList.toggle("registration-five", department.name === "Стойка регистрации");
-  keys.forEach((metric, index) => els.primaryMetrics.append(metricCard(metric, metricValue(department, record, metric), index, hasWorkforce, isWorkforceMetric(metric) ? workforceExtras : (metricExtras.get(metric.id) || []))));
+  const modern = department.name === "Персональные координаторы";
+  document.body.classList.toggle("pk-modern", modern);
+  keys.forEach((metric, index) => {
+    const card = metricCard(metric, metricValue(department, record, metric), index, hasWorkforce, isWorkforceMetric(metric) ? workforceExtras : (metricExtras.get(metric.id) || []));
+    if (modern) card.insertBefore(metricFoot(department, metric), card.querySelector(".metric-breakdown, .workforce-breakdown"));
+    els.primaryMetrics.append(card);
+  });
   renderPeriodAnalytics(department, record);
   renderDetailGroups(department, record, alwaysVisibleDetailIds);
 }
